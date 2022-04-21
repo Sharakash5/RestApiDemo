@@ -4,6 +4,8 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.testng.Assert.assertEquals;
 
+import org.testng.Assert;
+
 import files.Payload;
 import io.restassured.RestAssured;
 import io.restassured.path.json.JsonPath;
@@ -17,9 +19,13 @@ public class EndToEndTesting {
 		// Then - validate the response
 
 		RestAssured.baseURI = "https://rahulshettyacademy.com";
-		String response = given().log().all().queryParam("key", "qaclick123").header("Content-Type", "application/json")
-				.body(Payload.addPlace()).when().post("maps/api/place/add/json").then().assertThat().statusCode(200)
-				.body("scope", equalTo("APP")).header("server", "Apache/2.4.41 (Ubuntu)").extract().response()
+		String response = given().log().all().queryParam("key", "qaclick123")
+				.header("Content-Type", "application/json")
+				.body(Payload.addPlace()).when().post("maps/api/place/add/json")
+				.then().assertThat().statusCode(200)
+				.body("scope", equalTo("APP"))
+				.header("server", "Apache/2.4.41 (Ubuntu)")
+				.extract().response()
 				.asString();
 
 		System.out.println(response);
@@ -37,18 +43,20 @@ public class EndToEndTesting {
 				+ "}")
 		
 		.when().put("maps/api/place/update/json")
-		.then().assertThat().statusCode(200).body("msg",equalTo("Address successully updated"));
+		.then().assertThat().statusCode(200).body("msg",equalTo("Address successfully updated"));
 		
 		//get place
 		String getPlaceResponse =given().log().all().queryParam("key", "qaclick123")
 				.queryParam("place_id", placeId)
-				.when().get("maps/api/place/add/json")
+				.when().get("maps/api/place/get/json")
 				.then().assertThat().log().all().statusCode(200).extract().response().asString();
+		System.out.println(getPlaceResponse);
 		
-		JsonPath js1= new JsonPath (getPlaceResponse);
-		String actualAddress =js1.getString("address");
+		JsonPath js2= new JsonPath (getPlaceResponse);
+		String actualAddress =js2.getString("address");
 		System.out.println(actualAddress);
-		///assert.assertEquals(actualAddress, newAddress);
+		
+		Assert.assertEquals(actualAddress, newAddress);
 	}
 
 
